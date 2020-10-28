@@ -22,8 +22,12 @@ module.exports = class UserProxy {
     user.password = password
     user.nick_name = nickName || _.now()
     user.head_img = headImg || gravatar[_.random(0, len - 1)]
-
-    return user.save()
+    // eslint-disable-next-line eqeqeq
+    if (user.name == 'vic') {
+      return user.save()
+    } else {
+      return false
+    }
   }
 
   static update (user) {
