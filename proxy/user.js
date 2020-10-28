@@ -1,5 +1,6 @@
 'use strict'
 
+const config = require('config')
 const _ = require('lodash')
 const { User } = require('../models')
 
@@ -23,11 +24,11 @@ module.exports = class UserProxy {
     user.nick_name = nickName || _.now()
     user.head_img = headImg || gravatar[_.random(0, len - 1)]
     // eslint-disable-next-line eqeqeq
-    if (user.name == 'vic') {
-      return user.save()
-    } else {
+    const whiteUsers = config.get('whiteList.users')
+    if (whiteUsers && !whiteUsers.includes(user.name)) {
       return false
     }
+    return user.save()
   }
 
   static update (user) {

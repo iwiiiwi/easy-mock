@@ -15,6 +15,9 @@ const jwtExpire = config.get('jwt.expire')
 
 async function createUser (name, password) {
   const user = await UserProxy.newAndSave(name, password)
+  if (!user) {
+    return false
+  }
   await ProjectProxy
     .newAndSave({
       user: user.id,
@@ -60,8 +63,12 @@ module.exports = class UserController {
 
     const newPassword = util.bhash(password)
 
-    await createUser(name, newPassword)
+    const result = await createUser(name, newPassword)
 
+    if (!result) {
+      ctx.body = ctx.util.refail('用户名已被使用')
+      return
+    }
     ctx.body = ctx.util.resuccess()
   }
 
